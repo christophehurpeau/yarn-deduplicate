@@ -1,9 +1,14 @@
-import * as lockfile from '@yarnpkg/lockfile';
+import { Descriptor, structUtils } from '@yarnpkg/core';
+import * as yarnParsers from '@yarnpkg/parsers';
 import semver from 'semver';
 
 type YarnEntry = {
-    resolved: string
     version: string
+    resolution: string
+    dependencies?: Record<string, string>
+    checksum?: string;
+    languageName?: 'node'
+    linkType?: 'hard' | 'soft'
 }
 
 type YarnEntries = Record<string,YarnEntry>;
@@ -12,10 +17,15 @@ type Packages = Record<string, Package[]>;
 
 type Package = {
     installedVersion:string,
-    name: string,
+    packageKey: string,
+    packageName: string,
     pkg: YarnEntry,
-    satisfiedBy: Set<string>
+    ignored: boolean,
+    descriptorString: string,
+    descriptor: Descriptor,
+    satisfiedBy: Set<string>,
     candidateVersions?: string[],
+    requestedProtocol: string,
     requestedVersion: string,
     bestVersion?: string,
     versions: Versions
@@ -37,76 +47,86 @@ type Options = {
     includePrerelease?: boolean;
 }
 
-const parseYarnLock = (file:string) => lockfile.parse(file).object as YarnEntries;
+const parseYarnLock = (file:string) => yarnParsers.parseSyml(file) as YarnEntries;
 
 const extractPackages = (
     yarnEntries: YarnEntries,
-    includeScopes:string[] = [],
-    includePackages:string[] = [],
-    excludePackages:string[] = [],
-    excludeScopes:string[] = []
+    {
+        includeScopes = [],
+        includePackages = [],
+        excludePackages = [],
+        excludeScopes = [],
+    }: Options = {}
 ): Packages => {
     const packages: Packages = {};
-    const re = /^(.*)@([^@]*?)$/;
+    const re = /^(?:([^:]*):)?([^@]*?)$/;
 
     for (const [entryName, entry] of Object.entries(yarnEntries)) {
-        const match = entryName.match(re);
+        if (entryName === '__metadata') continue;
 
-        let packageName:string, requestedVersion:string;
-        // TODO: make this ignore other urls like:
-        //      git...
-        //      user/repo
-        //      tag
-        //      path/path/path
-        if (match) {
-            [, packageName, requestedVersion] = match;
-        } else {
-            // If there is no match, it means there is no version specified. According to the doc
-            // this means "*" (https://docs.npmjs.com/files/package.json#dependencies)
-            packageName = entryName;
-            requestedVersion = '*';
+        for (const descriptorString of entryName.split(', ')){
+            const descriptor = structUtils.parseDescriptor(descriptorString);
+            const [, requestedProtocol, requestedVersion] = descriptor.range.match(re) || [];
+
+            const packageName = structUtils.stringifyIdent(descriptor);
+
+            let ignored = requestedProtocol !== 'npm' || entry.linkType !== 'hard';
+
+            // If there is a list of scopes, only process those.
+            if (
+                includeScopes.length > 0 &&
+                !includeScopes.find((scope) => packageName.startsWith(`${scope}/`))
+            ) {
+                ignored = true;
+            } else if (
+                excludeScopes.length > 0 &&
+                excludeScopes.find((scope) => packageName.startsWith(`${scope}/`))
+            ) {
+                ignored = true;
+            }
+
+            // If there is a list of package names, only process those.
+            else if (includePackages.length > 0 && !includePackages.includes(packageName)) {
+                ignored = true;
+            } else if (excludePackages.length > 0 && excludePackages.includes(packageName)) {
+                ignored = true;
+            }
+
+            const packageKey = ignored ? entryName : packageName + '@' + requestedProtocol;
+            packages[packageKey] = packages[packageKey] || [];
+            
+            packages[packageKey].push({
+                packageKey,
+                packageName,
+                pkg: entry,
+                descriptorString,
+                descriptor,
+                ignored,
+                requestedProtocol, 
+                requestedVersion,
+                installedVersion: entry.version,
+                satisfiedBy: new Set(),
+                versions: new Map()
+            });
         }
-
-        // If there is a list of scopes, only process those.
-        if (
-            includeScopes.length > 0 &&
-            !includeScopes.find((scope) => packageName.startsWith(`${scope}/`))
-        ) {
-            continue;
-        }
-
-        if (
-            excludeScopes.length > 0 &&
-            excludeScopes.find((scope) => packageName.startsWith(`${scope}/`))
-        ) {
-            continue;
-        }
-
-        // If there is a list of package names, only process those.
-        if (includePackages.length > 0 && !includePackages.includes(packageName)) continue;
-
-        if (excludePackages.length > 0 && excludePackages.includes(packageName)) continue;
-
-        packages[packageName] = packages[packageName] || [];
-        packages[packageName].push({
-            pkg: entry,
-            name: packageName,
-            requestedVersion,
-            installedVersion: entry.version,
-            satisfiedBy: new Set(),
-            versions: new Map()
-        });
     };
     return packages;
 };
 
-const computePackageInstances = (packages: Packages, name: string, useMostCommon: boolean, includePrerelease = false): Package[] => {
+
+
+const computePackageInstances = (packages: Packages, packageKey: string,
+    {
+        useMostCommon = false,
+        includePrerelease = false,
+    }: Options = {}): Package[] => {
     // Instances of this package in the tree
-    const packageInstances = packages[name];
+    const packageInstances = packages[packageKey];
 
     // Extract the list of unique versions for this package
     const versions:Versions = new Map();
     for (const packageInstance of packageInstances) {
+        if (packageInstance.ignored) continue;
         if (versions.has(packageInstance.installedVersion)) continue;
         versions.set(packageInstance.installedVersion, {
             pkg: packageInstance.pkg,
@@ -133,6 +153,11 @@ const computePackageInstances = (packages: Packages, name: string, useMostCommon
 
     // Sort the list of satisfied versions
     packageInstances.forEach((packageInstance) => {
+        if (packageInstance.ignored) {
+            packageInstance.bestVersion = packageInstance.installedVersion;
+            return;
+        }
+
         // Save all versions for future reference
         packageInstance.versions = versions;
 
@@ -157,53 +182,69 @@ const computePackageInstances = (packages: Packages, name: string, useMostCommon
     return packageInstances;
 };
 
-export const getDuplicates = (
-    yarnEntries: YarnEntries,
-    {
-        includeScopes = [],
-        includePackages = [],
-        excludePackages = [],
-        excludeScopes = [],
-        useMostCommon = false,
-        includePrerelease = false,
-    }: Options = {}
+export const getBest = (
+    packages: Packages,
+    options: Options = {}
 ): Package[] => {
-    const packages = extractPackages(
-        yarnEntries,
-        includeScopes,
-        includePackages,
-        excludePackages,
-        excludeScopes
-    );
 
     return Object.keys(packages)
         .reduce(
             (acc:Package[], name) =>
                 acc.concat(
-                    computePackageInstances(packages, name, useMostCommon, includePrerelease)
+                    computePackageInstances(packages, name, options)
                 ),
             []
-        )
+        );
+};
+
+export const getDuplicates = (
+    packages: Packages,
+    options: Options = {}
+): Package[] => {
+    return getBest(packages, options)
         .filter(({ bestVersion, installedVersion }) => bestVersion !== installedVersion);
 };
 
 export const listDuplicates = (yarnLock:string, options: Options = {}): string[] => {
-    const packages = getDuplicates(parseYarnLock(yarnLock), options);
-    const result = packages.map(({ bestVersion, name, installedVersion, requestedVersion }) => {
-        return `Package "${name}" wants ${requestedVersion} and could get ${bestVersion}, but got ${installedVersion}`;
+    const yarnEntries = parseYarnLock(yarnLock);
+    const packages = extractPackages(yarnEntries);
+    const duplicates = getDuplicates(packages, options);
+    
+    const result = duplicates.map(({ bestVersion, packageName, installedVersion, requestedVersion }) => {
+        return `Package "${packageName}" wants ${requestedVersion} and could get ${bestVersion}, but got ${installedVersion}`;
     });
     return result;
 };
 
-export const fixDuplicates = ( yarnLock: string, options: Options = {} ) => {
-    const json = parseYarnLock(yarnLock);
-    const duplicatedPackages = getDuplicates(json, options);
+const yarnLockHeader = `${[
+    `# This file is generated by running "yarn install" inside your project.\n`,
+    `# Manual changes might be lost - proceed with caution!\n`,
+  ].join(``)}\n`;
 
-    for (const duplicatedPackage of duplicatedPackages) {
-        const { bestVersion, name, versions, requestedVersion } = duplicatedPackage;
-        json[`${name}@${requestedVersion}`] = (versions.get((bestVersion as string)) as Version).pkg;
+export const fixDuplicates = ( yarnLock: string, options: Options = {} ) => {
+    const yarnEntries = parseYarnLock(yarnLock);
+    const packages = extractPackages(yarnEntries);
+    const bestPackages = getBest(packages, options);
+    const packageResolutions: Record<string,any> = {};
+
+    for (const bestPackage of bestPackages) {
+        const { descriptorString, bestVersion, requestedProtocol, installedVersion, pkg, descriptor, ignored, packageKey } = bestPackage;
+
+        const keyWithBestVersion = ignored ? packageKey : structUtils.stringifyDescriptor({
+            ...descriptor,
+            range: requestedProtocol + ':' + bestVersion
+        });
+        packageResolutions[keyWithBestVersion] = packageResolutions[keyWithBestVersion] || {keys:[]};
+        packageResolutions[keyWithBestVersion].keys.push(descriptorString);
+        if (bestVersion === installedVersion) packageResolutions[keyWithBestVersion].pkg = pkg;
     }
 
-    return lockfile.stringify(json);
+    const newYarnEntries: YarnEntries = { __metadata: yarnEntries.__metadata };
+    for (const packageResolution of Object.values(packageResolutions)) {
+        const key = packageResolution.keys.join(', ');
+        newYarnEntries[key] = packageResolution.pkg;
+    }
+
+    return yarnLockHeader + yarnParsers.stringifySyml(newYarnEntries);
 };
 

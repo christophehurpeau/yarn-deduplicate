@@ -1,6 +1,6 @@
 {
-    "name": "yarn-deduplicate",
-    "version": "6.0.1",
+    "name": "yarn-berry-deduplicate",
+    "version": "6.0.2",
     "bin": "./dist/cli.js",
     "description": "Deduplication tool for yarn.lock files",
     "keywords": [
@@ -22,8 +22,8 @@
         "build": "yarn clean && yarn tsc --build",
         "release": "release-it"
     },
-    "homepage": "https://github.com/scinos/yarn-deduplicate#readme",
-    "bugs": "https://github.com/scinos/yarn-deduplicate/issues",
+    "homepage": "https://github.com/christophehurpeau/yarn-deduplicate#readme",
+    "bugs": "https://github.com/christophehurpeau/yarn-deduplicate/issues",
     "license": "Apache-2.0",
     "author": "Sergio Cinos <sergio.cinos@gmail.com>",
     "main": "dist/index.js",
@@ -39,14 +39,14 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git@github.com:scinos/yarn-deduplicate.git"
+        "url": "git@github.com:christophehurpeau/yarn-deduplicate.git"
     },
     "engines": {
-        "node": ">=v14",
-        "yarn": ">=1 <2"
+        "node": ">=v14"
     },
     "dependencies": {
-        "@yarnpkg/lockfile": "^1.1.0",
+        "@yarnpkg/core": "^4.0.0-rc.37",
+        "@yarnpkg/parsers": "^3.0.0-rc.37",
         "commander": "^9.4.1",
         "semver": "^7.3.8",
         "tslib": "^2.4.1"
@@ -59,7 +59,6 @@
         "@tsconfig/node12": "^1.0.11",
         "@types/jest": "^29.2.4",
         "@types/semver": "^7.3.13",
-        "@types/yarnpkg__lockfile": "^1.1.5",
         "eslint": "^8.29.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-jest": "^27.1.6",

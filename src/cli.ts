@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import {program} from 'commander';
+import { program } from 'commander';
 import fs from 'fs';
 
-import  { fixDuplicates, listDuplicates } from './index.js';
+import { fixDuplicates, listDuplicates } from './index.js';
 const version = require('../package.json').version;
 
 const FAIL_MESSAGE = '\nFound duplicated entries. Run yarn-deduplicate to deduplicate them.';
@@ -13,8 +13,8 @@ program
     .usage('[options] [yarn.lock path (default: yarn.lock)]')
     .option(
         '-s, --strategy <strategy>',
-        'deduplication strategy. Valid values: fewer, highest. Default is "highest"',
-        'highest'
+        'deduplication strategy. Valid values: fewer, highest, both. Default is "both"',
+        'both'
     )
     .option('-l, --list', 'do not change yarn.lock, just output the diagnosis')
     .option(
@@ -56,7 +56,7 @@ if (scopes && packages) {
     program.help();
 }
 
-if (strategy !== 'highest' && strategy !== 'fewer') {
+if (strategy !== 'highest' && strategy !== 'fewer' && strategy !== 'both') {
     console.error(`Invalid strategy ${strategy}`);
     program.help();
 }
@@ -66,6 +66,11 @@ try {
     const useMostCommon = strategy === 'fewer';
 
     if (list) {
+        if (strategy !== 'highest' && strategy !== 'fewer') {
+            console.error(`Invalid strategy ${strategy}`);
+            program.help();
+        }
+
         const duplicates = listDuplicates(yarnLock, {
             useMostCommon,
             includeScopes: scopes,
@@ -88,6 +93,17 @@ try {
             excludeScopes: excludeScopes,
             includePrerelease: includePrerelease,
         });
+
+        if (strategy === 'both') {
+            dedupedYarnLock = fixDuplicates(yarnLock, {
+                useMostCommon: false,
+                includeScopes: scopes,
+                includePackages: packages,
+                excludePackages: exclude,
+                excludeScopes: excludeScopes,
+                includePrerelease: includePrerelease,
+            });
+        }
 
         if (print) {
             console.log(dedupedYarnLock);
