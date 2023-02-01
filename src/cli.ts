@@ -83,6 +83,8 @@ try {
         if (fail && duplicates.length > 0) {
             console.error(FAIL_MESSAGE);
             process.exit(1);
+        } else {
+            console.log('No duplicates found!')
         }
     } else {
         let dedupedYarnLock = fixDuplicates(yarnLock, {
@@ -95,7 +97,7 @@ try {
         });
 
         if (strategy === 'both') {
-            dedupedYarnLock = fixDuplicates(yarnLock, {
+            dedupedYarnLock = fixDuplicates(dedupedYarnLock, {
                 useMostCommon: false,
                 includeScopes: scopes,
                 includePackages: packages,
