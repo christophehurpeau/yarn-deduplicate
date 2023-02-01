@@ -63,7 +63,7 @@ if (strategy !== 'highest' && strategy !== 'fewer' && strategy !== 'both') {
 
 try {
     const yarnLock = fs.readFileSync(file, 'utf8');
-    const useMostCommon = strategy === 'fewer';
+    const useMostCommon = strategy === 'fewer' || strategy === 'both';
 
     if (list) {
         if (strategy !== 'highest' && strategy !== 'fewer') {
@@ -114,7 +114,12 @@ try {
             if (eolMatch && eolMatch[0] === '\r\n') {
                 dedupedYarnLock = dedupedYarnLock.replace(/\n/g, '\r\n');
             }
-            fs.writeFileSync(file, dedupedYarnLock);
+            if (dedupedYarnLock === yarnLock) {
+                console.log('No duplicates found, yarn.lock identical');
+            } else {
+                console.log('Found duplicates, yarn.lock changed');
+                fs.writeFileSync(file, dedupedYarnLock);
+            }
         }
 
         if (fail && yarnLock !== dedupedYarnLock) {

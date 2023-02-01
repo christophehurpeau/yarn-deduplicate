@@ -1,6 +1,6 @@
 {
     "name": "yarn-berry-deduplicate",
-    "version": "6.0.2",
+    "version": "6.0.4",
     "bin": "./dist/cli.js",
     "description": "Deduplication tool for yarn.lock files",
     "keywords": [
@@ -19,7 +19,7 @@
         "typecheck": "yarn tsc --build tsconfig.json --force && yarn tsc --build tests/tsconfig.json --force",
         "validate": "yarn test && yarn lint && yarn typecheck",
         "prepack": "yarn build",
-        "build": "yarn clean && yarn tsc --build",
+        "build": "yarn clean && yarn tsc --build && chmod +x ./dist/cli.js",
         "release": "release-it"
     },
     "homepage": "https://github.com/christophehurpeau/yarn-deduplicate#readme",
