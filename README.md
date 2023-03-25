@@ -1,58 +1,30 @@
-# yarn-deduplicate
+# yarn-berry-deduplicate
+
+*This is a fork of [yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) for yarn berry. *
 
 Cleans up `yarn.lock` by removing duplicates.
 
-Builds:
-[![Node.js CI](https://github.com/scinos/yarn-deduplicate/actions/workflows/node.js.yml/badge.svg)](https://github.com/scinos/yarn-deduplicate/actions/workflows/node.js.yml)
+Yarn berry includes [`yarn dedupe`](https://yarnpkg.com/cli/dedupe) that currently only supports "highest" strategy. Follow this issue: https://github.com/yarnpkg/berry/issues/2297.
 
-This package only works with Yarn v1. Yarn v2 supports package deduplication
-[natively](https://github.com/yarnpkg/berry/pull/1558)!
-
-A duplicate package is when two dependencies are resolved to a different version, even when a single
-version matches the range specified in the dependencies. See the
-[Deduplication strategies](#deduplication-strategies) section for a few examples.
-
-## Installation
-
-Install the package globally:
-
-```sh
-npm install -g yarn-deduplicate
-```
-
-or
-
-```sh
-yarn global add yarn-deduplicate
-```
-
-This package also works wth
-[npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b), so you
-don't need to install it. For example, to recreate the most common scenario below with `npx`, run:
-
-```sh
-npx yarn-deduplicate yarn.lock
-```
-
----
+In the meantime, this is a fork of [yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) that works with both highest and fewer strategies.
 
 ## Usage
 
-The most common scenario is to run
-
 ```sh
-yarn-deduplicate yarn.lock
+yarn dlx yarn-berry-deduplicate
 ```
 
-This will use the default strategy to remove duplicated packages in `yarn.lock`.
+This will use the fewest then highest strategy to remove duplicated packages in `yarn.lock`.
 
 If you do not specify the yarn.lock path, it defaults to `yarn.lock`.
 
 Check all available options with:
 
 ```sh
-yarn-deduplicate --help
+yarn dlx yarn-berry-deduplicate --help
 ```
+
+Note: you can apply multiple times deduplication and each time dedupe more. To prevent issues, try running `yarn dedupe` after each `yarn-berry-deduplicate`.
 
 ---
 
