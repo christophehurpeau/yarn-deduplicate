@@ -160,86 +160,10 @@ exit with status 1 if there are duplicated packages. Example:
 
 ```sh
 # Print the list of duplicated packages and exit with status 1
-yarn-deduplicate --list --fail
+yarn dlx yarn-berry-deduplicate --list --fail
 
 # Deduplicate yarn.lock and exit with status 1 if changes were required
-yarn-deduplicate --fail
-```
-
----
-
-## Migration guide
-
-### From 2.x to 3.x
-
-In this version we have adopted variadic arguments from commander.js. These are the equivalent
-commands:
-
-```sh
-#Old
-yarn-deduplicate --packages libA,libB
-yarn-deduplicate --scopes @scopeA,@scopeB
-yarn-deduplicate --exclude libA,libB
-
-#New
-yarn-deduplicate --packages libA libB
-yarn-deduplicate --scopes @scopeA @scopeB
-yarn-deduplicate --exclude libA libB
-```
-
-A consequence of this change is that if you were using one or more of the affected options (
-`--packages`, `--scopes` or `--exclude`) **and** a custom path for `yarn.lock`, you need to use `--`
-to "stop" package/scope/exclude parsing:
-
-```sh
-yarn-deduplicate --packages libA libB -- path/to/yarn.lock
-```
-
-### From 0.x to 1.x
-
-In this version we have renamed the project and refactored the CLI. These are the equivalent
-commands:
-
-#### Installation
-
-```sh
-# Old
-npm install -g yarn-tools
-
-# New
-npm install -g yarn-deduplicate
-```
-
-#### List duplicates
-
-```sh
-# Old
-yarn-tools list-duplicates path/to/yarn.lock
-
-# New
-yarn-deduplicate --list path/to/yarn.lock
-```
-
-### Deduplicate yarn.lock
-
-```sh
-# Old
-yarn-tools fix-duplicates path/to/yarn.lock > tmp
-mv tmp path/to/yarn.lock
-
-# New
-yarn-deduplicate path/to/yarn.lock
-```
-
-### Limit packages to deduplicate yarn.lock
-
-```sh
-# Old
-yarn-tools fix-duplicates path/to/yarn.lock package1 package2
-
-
-# New
-yarn-deduplicate --packages package1,package2 path/to/yarn.lock
+yarn dlx yarn-berry-deduplicate --fail
 ```
 
 ## License
