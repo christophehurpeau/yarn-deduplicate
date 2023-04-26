@@ -13,8 +13,8 @@ program
     .usage('[options] [yarn.lock path (default: yarn.lock)]')
     .option(
         '-s, --strategy <strategy>',
-        'deduplication strategy. Valid values: fewer, highest, both. Default is "both"',
-        'both'
+        'deduplication strategy. Valid values: fewerHighest, mostCommon, highest. Default is "fewerHighest"',
+        'fewerHighest'
     )
     .option('-l, --list', 'do not change yarn.lock, just output the diagnosis')
     .option(
@@ -56,23 +56,17 @@ if (scopes && packages) {
     program.help();
 }
 
-if (strategy !== 'highest' && strategy !== 'fewer' && strategy !== 'both') {
+if (strategy !== 'highest' && strategy !== 'fewer' && strategy !== 'fewerHighest' && strategy !== 'mostCommon') {
     console.error(`Invalid strategy ${strategy}`);
     program.help();
 }
 
 try {
     const yarnLock = fs.readFileSync(file, 'utf8');
-    const useMostCommon = strategy === 'fewer' || strategy === 'both';
 
     if (list) {
-        if (strategy !== 'highest' && strategy !== 'fewer') {
-            console.error(`Invalid strategy ${strategy}`);
-            program.help();
-        }
-
         const duplicates = listDuplicates(yarnLock, {
-            useMostCommon,
+            strategy,
             includeScopes: scopes,
             includePackages: packages,
             excludePackages: exclude,
@@ -83,29 +77,18 @@ try {
         if (fail && duplicates.length > 0) {
             console.error(FAIL_MESSAGE);
             process.exit(1);
-        } else {
+        } else if (duplicates.length === 0) {
             console.log('No duplicates found!')
         }
     } else {
         let dedupedYarnLock = fixDuplicates(yarnLock, {
-            useMostCommon,
+            strategy,
             includeScopes: scopes,
             includePackages: packages,
             excludePackages: exclude,
             excludeScopes: excludeScopes,
             includePrerelease: includePrerelease,
         });
-
-        if (strategy === 'both') {
-            dedupedYarnLock = fixDuplicates(dedupedYarnLock, {
-                useMostCommon: false,
-                includeScopes: scopes,
-                includePackages: packages,
-                excludePackages: exclude,
-                excludeScopes: excludeScopes,
-                includePrerelease: includePrerelease,
-            });
-        }
 
         if (print) {
             console.log(dedupedYarnLock);

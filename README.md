@@ -1,12 +1,17 @@
 # yarn-berry-deduplicate
 
-*This is a fork of [yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) for yarn berry. *
+_This is a fork of [yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) for yarn
+berry. _
 
 Cleans up `yarn.lock` by removing duplicates.
 
-Yarn berry includes [`yarn dedupe`](https://yarnpkg.com/cli/dedupe) that currently only supports "highest" strategy. Follow this issue: https://github.com/yarnpkg/berry/issues/2297.
+Yarn berry includes [`yarn dedupe`](https://yarnpkg.com/cli/dedupe) that currently only supports
+"highest" strategy. Follow this issue: https://github.com/yarnpkg/berry/issues/2297.
 
-In the meantime, this is a fork of [yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) that works with both highest and fewer strategies.
+In the meantime, this is a fork of
+[yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) that works with both highest and
+fewer (renamed "mostCommon") strategies as well as a new "fewerHighest" strategy which combines
+"mostCommon" and "highest".
 
 ## Usage
 
@@ -24,7 +29,8 @@ Check all available options with:
 yarn dlx yarn-berry-deduplicate --help
 ```
 
-Note: you can apply multiple times deduplication and each time dedupe more. To prevent issues, try running `yarn dedupe` after each `yarn-berry-deduplicate`.
+Note: you can apply multiple times deduplication and each time dedupe more. To prevent issues, try
+running `yarn dedupe` after each `yarn-berry-deduplicate`.
 
 ---
 
