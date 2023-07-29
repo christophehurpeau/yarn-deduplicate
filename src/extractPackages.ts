@@ -18,9 +18,10 @@ export type Package = {
     ignored: boolean,
     descriptorString: string,
     descriptor: Descriptor,
+    actualDescriptor: Descriptor,
     satisfiedBy: Set<string>,
     candidateVersions?: string[],
-    requestedProtocol: string,
+    requestedProtocol: string | null,
     requestedVersion: string,
     bestVersion?: string,
     versions: Versions
@@ -38,18 +39,27 @@ export const extractPackages = (
   }: Options = {}
 ): Packages => {
   const packages: Packages = {};
-  const re = /^(?:([^:]*):)?([^@]*?)$/;
 
   for (const [entryName, entry] of Object.entries(yarnEntries)) {
       if (entryName === '__metadata') continue;
 
       for (const descriptorString of entryName.split(', ')){
           const descriptor = structUtils.parseDescriptor(descriptorString);
-          const [, requestedProtocol, requestedVersion] = descriptor.range.match(re) || [];
+          const range = structUtils.parseRange(descriptor.range);
 
-          const packageName = structUtils.stringifyIdent(descriptor);
+          // If the range is a valid descriptor we're dealing with an alias ("foo": "npm:lodash@*")
+          // and need to make the locator from that instead of the original descriptor
+          let actualDescriptor = descriptor;
+          try {
+            const potentialDescriptor = structUtils.tryParseDescriptor(range.selector, true);
+            if (potentialDescriptor) {
+            actualDescriptor = potentialDescriptor;
+            }
+          } catch { }
 
-          let ignored = requestedProtocol !== 'npm' || (!!entry.linkType && entry.linkType !== 'hard');
+          const packageName = structUtils.stringifyIdent(actualDescriptor);
+
+          let ignored = !range.protocol || !['npm','npm:'].includes(range.protocol) || (!!entry.linkType && entry.linkType !== 'hard');
 
           // If there is a list of scopes, only process those.
           if (
@@ -71,7 +81,7 @@ export const extractPackages = (
               ignored = true;
           }
 
-          const packageKey = ignored ? entryName : packageName + '@' + requestedProtocol;
+          const packageKey = ignored ? entryName : packageName + '@' + range.protocol;
           packages[packageKey] = packages[packageKey] || [];
 
           packages[packageKey].push({
@@ -80,9 +90,10 @@ export const extractPackages = (
               pkg: entry,
               descriptorString,
               descriptor,
+              actualDescriptor,
               ignored,
-              requestedProtocol,
-              requestedVersion,
+              requestedProtocol: range.protocol,
+              requestedVersion: range.selector,
               installedVersion: entry.version,
               satisfiedBy: new Set(),
               versions: new Map()

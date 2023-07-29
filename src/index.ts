@@ -51,10 +51,10 @@ export const fixDuplicates = ( yarnLock: string, options: Options = {} ) => {
     const packageResolutions: Record<string,any> = {};
 
     for (const bestPackage of bestPackages) {
-        const { descriptorString, bestVersion, requestedProtocol, installedVersion, pkg, descriptor, ignored, packageKey } = bestPackage;
+        const { descriptorString, bestVersion, requestedProtocol, installedVersion, pkg, actualDescriptor, ignored, packageKey } = bestPackage;
 
         const keyWithBestVersion = ignored ? packageKey : structUtils.stringifyDescriptor({
-            ...descriptor,
+            ...actualDescriptor,
             range: requestedProtocol + ':' + bestVersion
         });
         packageResolutions[keyWithBestVersion] = packageResolutions[keyWithBestVersion] || {keys:[]};
