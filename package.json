@@ -45,8 +45,8 @@
         "node": ">=v14"
     },
     "dependencies": {
-        "@yarnpkg/core": "^4.0.0-rc.37",
-        "@yarnpkg/parsers": "^3.0.0-rc.37",
+        "@yarnpkg/core": "^4.0.3",
+        "@yarnpkg/parsers": "^3.0.0",
         "commander": "^9.4.1",
         "semver": "^7.3.8",
         "tslib": "^2.4.1"
@@ -75,5 +75,5 @@
             "<rootDir>/tests/*.ts"
         ]
     },
-    "packageManager": "yarn@3.3.0"
+    "packageManager": "yarn@3.8.1"
 }
