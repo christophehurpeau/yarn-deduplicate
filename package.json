@@ -60,7 +60,7 @@
         "@types/jest": "^29.2.4",
         "@types/semver": "^7.3.13",
         "eslint": "^8.29.0",
-        "eslint-config-prettier": "^8.5.0",
+        "eslint-config-prettier": "^8.10.0",
         "eslint-plugin-jest": "^27.1.6",
         "eslint-plugin-md": "^1.0.19",
         "eslint-plugin-prettier": "^4.2.1",
