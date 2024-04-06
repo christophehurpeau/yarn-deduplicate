@@ -42,7 +42,7 @@
         "url": "git@github.com:christophehurpeau/yarn-deduplicate.git"
     },
     "engines": {
-        "node": ">=v14"
+        "node": ">=14.21.3"
     },
     "dependencies": {
         "@yarnpkg/core": "^4.0.0-rc.37",
