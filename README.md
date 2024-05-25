@@ -1,7 +1,7 @@
 # yarn-berry-deduplicate
 
 _This is a fork of [yarn-deduplicate](https://www.npmjs.com/package/yarn-deduplicate) for yarn
-berry. _
+berry._
 
 Cleans up `yarn.lock` by removing duplicates.
 
