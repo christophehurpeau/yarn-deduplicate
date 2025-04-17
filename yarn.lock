@@ -2253,24 +2253,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/core@npm:^4.0.0-rc.37":
-  version: 4.0.0-rc.37
-  resolution: "@yarnpkg/core@npm:4.0.0-rc.37"
+"@yarnpkg/core@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "@yarnpkg/core@npm:4.4.1"
   dependencies:
     "@arcanis/slice-ansi": ^1.1.1
     "@types/semver": ^7.1.0
     "@types/treeify": ^1.0.0
-    "@yarnpkg/fslib": ^3.0.0-rc.37
-    "@yarnpkg/libzip": ^3.0.0-rc.37
-    "@yarnpkg/parsers": ^3.0.0-rc.37
-    "@yarnpkg/shell": ^4.0.0-rc.37
+    "@yarnpkg/fslib": ^3.1.2
+    "@yarnpkg/libzip": ^3.2.1
+    "@yarnpkg/parsers": ^3.0.3
+    "@yarnpkg/shell": ^4.1.2
     camelcase: ^5.3.1
     chalk: ^3.0.0
-    ci-info: ^3.2.0
-    clipanion: ^3.2.0-rc.10
-    cross-spawn: 7.0.3
+    ci-info: ^4.0.0
+    clipanion: ^4.0.0-rc.2
+    cross-spawn: ^7.0.3
     diff: ^5.1.0
-    globby: ^11.0.1
+    dotenv: ^16.3.1
+    fast-glob: ^3.2.2
     got: ^11.7.0
     lodash: ^4.17.15
     micromatch: ^4.0.2
@@ -2282,57 +2283,57 @@ __metadata:
     treeify: ^1.1.0
     tslib: ^2.4.0
     tunnel: ^0.0.6
-  checksum: 5f29fc02aa580bf9ea1a15c4fb6ca994b6a8380420cfd2f7f9a46cab102e8d1ab9cb6646ac636f10fa003f090a54a1cf3bae58dbe48263aee4d1a19ae1e193e0
+  checksum: 6b7a4a6525bb7ec14ecd18b7f28b741509a06f3f1e85cd4df123673f97cf1fe9fb3573e78ed452540fc9f983f51a1c425039ee552d8bb9eca541f2cf8362d8a9
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^3.0.0-rc.37":
-  version: 3.0.0-rc.37
-  resolution: "@yarnpkg/fslib@npm:3.0.0-rc.37"
+"@yarnpkg/fslib@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "@yarnpkg/fslib@npm:3.1.2"
   dependencies:
     tslib: ^2.4.0
-  checksum: 5903704673424d629d9e561f1a22f9ee0509c63563a10838425ae3e4a78fc56225a33f3c3c638d9fe789b698c6a5b126622c473d69e07e954db9acdf21dccb60
+  checksum: 7f8a9c71c183dd31d2eb678cf46e0eec558ebcc11750fd00c2587b9aa6d580c9a0c612cd223d8241fc7d6c2dbe18cd2559213ac91c5cd852a559227dd2a661c5
   languageName: node
   linkType: hard
 
-"@yarnpkg/libzip@npm:^3.0.0-rc.37":
-  version: 3.0.0-rc.37
-  resolution: "@yarnpkg/libzip@npm:3.0.0-rc.37"
+"@yarnpkg/libzip@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "@yarnpkg/libzip@npm:3.2.1"
   dependencies:
     "@types/emscripten": ^1.39.6
-    "@yarnpkg/fslib": ^3.0.0-rc.37
+    "@yarnpkg/fslib": ^3.1.2
     tslib: ^2.4.0
   peerDependencies:
-    "@yarnpkg/fslib": ^3.0.0-rc.37
-  checksum: 7692d73cb95517111e15d50bfc3d9c992e727710ee6ce8027ee0825f39bde4274f36f7b9d0890874e7b2744c077563815708c3ffb76588cd9f88d4d7f127acd7
+    "@yarnpkg/fslib": ^3.1.2
+  checksum: 2d24000255ae90c40f58656e5ce3b901e8cd2ef41751c9ebbe80c96fd3fd432fac0c01bfd05e02b179058fc9c73ef9f2c08d9e7fa8e94b181a9bdaa7369e9175
   languageName: node
   linkType: hard
 
-"@yarnpkg/parsers@npm:^3.0.0-rc.37":
-  version: 3.0.0-rc.37
-  resolution: "@yarnpkg/parsers@npm:3.0.0-rc.37"
+"@yarnpkg/parsers@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@yarnpkg/parsers@npm:3.0.3"
   dependencies:
     js-yaml: ^3.10.0
     tslib: ^2.4.0
-  checksum: a6d351fbfd6f14c46f48779594b1015709605310629fae9fdeaf2e58ba87b48222a668c4b656926c2c960495491d6e465d25de7d076fa3dfe3f7f321013d80c1
+  checksum: d6f78ec15b36732a88aeb090d012756d03a855a301a29f0f4f725ac05186f2d2e26400ea5636016481bdca7d4a013f70d61141bc1add2048cf1c2e5132b9ecf8
   languageName: node
   linkType: hard
 
-"@yarnpkg/shell@npm:^4.0.0-rc.37":
-  version: 4.0.0-rc.37
-  resolution: "@yarnpkg/shell@npm:4.0.0-rc.37"
+"@yarnpkg/shell@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@yarnpkg/shell@npm:4.1.2"
   dependencies:
-    "@yarnpkg/fslib": ^3.0.0-rc.37
-    "@yarnpkg/parsers": ^3.0.0-rc.37
+    "@yarnpkg/fslib": ^3.1.2
+    "@yarnpkg/parsers": ^3.0.3
     chalk: ^3.0.0
-    clipanion: ^3.2.0-rc.10
-    cross-spawn: 7.0.3
+    clipanion: ^4.0.0-rc.2
+    cross-spawn: ^7.0.3
     fast-glob: ^3.2.2
     micromatch: ^4.0.2
     tslib: ^2.4.0
   bin:
     shell: ./lib/cli.js
-  checksum: 95dc57e81cd55695991fac804b1611b5cb0eeb360a736745dabadf51a91431f09ad561c878e83b624018bfb3986ef9b4b060b079e73cc4bbe3c7d793313bcb7d
+  checksum: 7615a16d3d4230124a09be0b2dd3e417811fee2bc32597127df072a2cc697db165f54fbf14d1f7dcaf2ff3afe9ebba13ee50af02fcfa14e51be5fab25d06e7a3
   languageName: node
   linkType: hard
 
@@ -3052,6 +3053,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ci-info@npm:^4.0.0":
+  version: 4.2.0
+  resolution: "ci-info@npm:4.2.0"
+  checksum: 0e3726721526f54c5b17cf44ab2ed69b842c756bcb4d2b26ce279e595a80a856aec9fb38a2986a2baca3de73d15895f3a01d2771c4aad93c898aae7e3ca0ceb1
+  languageName: node
+  linkType: hard
+
 "cjs-module-lexer@npm:^1.0.0":
   version: 1.2.2
   resolution: "cjs-module-lexer@npm:1.2.2"
@@ -3112,14 +3120,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^3.2.0-rc.10":
-  version: 3.2.0-rc.14
-  resolution: "clipanion@npm:3.2.0-rc.14"
+"clipanion@npm:^4.0.0-rc.2":
+  version: 4.0.0-rc.4
+  resolution: "clipanion@npm:4.0.0-rc.4"
   dependencies:
     typanion: ^3.8.0
   peerDependencies:
     typanion: "*"
-  checksum: 0bedf6c70d8f3f986fe105ba4a2182cf8d398201ed639095927ceef5d50f370ee2bb7e14239be2b5ddcf3dc8f3b72a1666d67e903ee405fcddf1f378a4704c54
+  checksum: a92aa03b24eb89292b7bda570973c164fff16a1c5ba4c4abdd1b0dd6110a57651752114ec9f5cfc29e2040213e514b3220142a2316c4fc4e659ba423caa296c7
   languageName: node
   linkType: hard
 
@@ -3316,17 +3324,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-spawn@npm:7.0.3"
-  dependencies:
-    path-key: ^3.1.0
-    shebang-command: ^2.0.0
-    which: ^2.0.1
-  checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
-  languageName: node
-  linkType: hard
-
 "cross-spawn@npm:^6.0.5":
   version: 6.0.5
   resolution: "cross-spawn@npm:6.0.5"
@@ -3337,6 +3334,17 @@ __metadata:
     shebang-command: ^1.2.0
     which: ^1.2.9
   checksum: f893bb0d96cd3d5751d04e67145bdddf25f99449531a72e82dcbbd42796bbc8268c1076c6b3ea51d4d455839902804b94bc45dfb37ecbb32ea8e54a6741c3ab9
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
+  version: 7.0.3
+  resolution: "cross-spawn@npm:7.0.3"
+  dependencies:
+    path-key: ^3.1.0
+    shebang-command: ^2.0.0
+    which: ^2.0.1
+  checksum: 671cc7c7288c3a8406f3c69a3ae2fc85555c04169e9d611def9a675635472614f1c0ed0ef80955d5b6d4e724f6ced67f0ad1bb006c2ea643488fcfef994d7f52
   languageName: node
   linkType: hard
 
@@ -3544,6 +3552,13 @@ __metadata:
   dependencies:
     is-obj: ^2.0.0
   checksum: 0f47600a4b93e1dc37261da4e6909652c008832a5d3684b5bf9a9a0d3f4c67ea949a86dceed9b72f5733ed8e8e6383cc5958df3bbd0799ee317fd181f2ece700
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.3.1":
+  version: 16.5.0
+  resolution: "dotenv@npm:16.5.0"
+  checksum: 6543fe87b5ddf2d60dd42df6616eec99148a5fc150cb4530fef5bda655db5204a3afa0e6f25f7cd64b20657ace4d79c0ef974bec32fdb462cad18754191e7a90
   languageName: node
   linkType: hard
 
@@ -4624,7 +4639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:^11.0.1, globby@npm:^11.1.0":
+"globby@npm:^11.1.0":
   version: 11.1.0
   resolution: "globby@npm:11.1.0"
   dependencies:
@@ -9635,8 +9650,8 @@ __metadata:
     "@tsconfig/node12": ^1.0.11
     "@types/jest": ^29.2.4
     "@types/semver": ^7.3.13
-    "@yarnpkg/core": ^4.0.0-rc.37
-    "@yarnpkg/parsers": ^3.0.0-rc.37
+    "@yarnpkg/core": ^4.4.1
+    "@yarnpkg/parsers": ^3.0.3
     commander: ^9.4.1
     eslint: ^8.29.0
     eslint-config-prettier: ^8.5.0

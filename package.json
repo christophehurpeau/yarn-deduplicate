@@ -45,8 +45,8 @@
         "node": ">=14.21.3"
     },
     "dependencies": {
-        "@yarnpkg/core": "^4.0.0-rc.37",
-        "@yarnpkg/parsers": "^3.0.0-rc.37",
+        "@yarnpkg/core": "^4.4.1",
+        "@yarnpkg/parsers": "^3.0.3",
         "commander": "^9.4.1",
         "semver": "^7.3.8",
         "tslib": "^2.4.1"
