@@ -66,7 +66,6 @@ export const computePackageInstances = (packages: Packages, packageKey: string,
       packageInstance.bestVersion = packageInstance.candidateVersions[0];
   });
 
-
   return packageInstances;
 };
 

@@ -15,7 +15,7 @@ export type Package = {
     packageKey: string,
     packageName: string,
     pkg: YarnEntry,
-    ignored: boolean,
+    ignored?: string,
     descriptorString: string,
     descriptor: Descriptor,
     actualDescriptor: Descriptor,
@@ -43,6 +43,9 @@ export const extractPackages = (
   for (const [entryName, entry] of Object.entries(yarnEntries)) {
       if (entryName === '__metadata') continue;
 
+      const resolution = entry.resolution;
+      const resolutionDescriptor = resolution ? structUtils.tryParseDescriptor(resolution, true) : null;
+
       for (const descriptorString of entryName.split(', ')){
           const descriptor = structUtils.parseDescriptor(descriptorString);
           const range = structUtils.parseRange(descriptor.range);
@@ -53,35 +56,48 @@ export const extractPackages = (
           try {
             const potentialDescriptor = structUtils.tryParseDescriptor(range.selector, true);
             if (potentialDescriptor) {
-            actualDescriptor = potentialDescriptor;
+                actualDescriptor = potentialDescriptor;
             }
           } catch { }
 
+          const actualRange = structUtils.parseRange(actualDescriptor.range);
+          const resolutionRange = resolutionDescriptor ? structUtils.parseRange(resolutionDescriptor.range) : null;
           const packageName = structUtils.stringifyIdent(actualDescriptor);
+          const protocol = actualRange.protocol || resolutionRange?.protocol || null;
 
-          let ignored = !range.protocol || !['npm','npm:'].includes(range.protocol) || (!!entry.linkType && entry.linkType !== 'hard');
+          let ignored = (() => {
+            if (!protocol) {
+                return 'no protocol';
+            }
+            if (!['npm','npm:'].includes(protocol)) {
+                return 'not npm protocol';
+            }
+            if (!!entry.linkType && entry.linkType !== 'hard') {
+                return 'not hard link';
+            }
+            })();
 
           // If there is a list of scopes, only process those.
           if (
               includeScopes.length > 0 &&
               !includeScopes.find((scope) => packageName.startsWith(`${scope}/`))
           ) {
-              ignored = true;
+              ignored = 'not in includeScopes';
           } else if (
               excludeScopes.length > 0 &&
               excludeScopes.find((scope) => packageName.startsWith(`${scope}/`))
           ) {
-              ignored = true;
+              ignored = 'in excludeScopes';
           }
 
           // If there is a list of package names, only process those.
           else if (includePackages.length > 0 && !includePackages.includes(packageName)) {
-              ignored = true;
+              ignored = 'not in includePackages';
           } else if (excludePackages.length > 0 && excludePackages.includes(packageName)) {
-              ignored = true;
+              ignored = 'in excludePackages';
           }
 
-          const packageKey = ignored ? entryName : packageName + '@' + range.protocol;
+          const packageKey = ignored ? entryName : packageName + '@' + protocol;
           packages[packageKey] = packages[packageKey] || [];
 
           packages[packageKey].push({
@@ -92,7 +108,7 @@ export const extractPackages = (
               descriptor,
               actualDescriptor,
               ignored,
-              requestedProtocol: range.protocol,
+              requestedProtocol: protocol,
               requestedVersion: range.selector,
               installedVersion: entry.version,
               satisfiedBy: new Set(),
