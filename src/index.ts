@@ -1,4 +1,4 @@
-import {  structUtils } from '@yarnpkg/core';
+import { structUtils } from '@yarnpkg/core';
 import { YarnEntries, parseYarnLock, stringifyYarnLock } from './yarnlock';
 import { Options } from './sharedTypes';
 import { Package, Packages, extractPackages } from './extractPackages';
